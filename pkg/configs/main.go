@@ -18,7 +18,7 @@ func DefaultConfig() Main {
 			CellsInStart: 10,
 			Timeout:      100,
 		},
-		MapSize: gameMap.Coords{X: 30, Y: 30},
+		MapSize: gameMap.Coords{X: 25, Y: 50},
 		Server: Server{
 			SsePort:       ":8095",
 			ConfigApiPort: "",
