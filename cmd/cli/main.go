@@ -36,6 +36,7 @@ func main() {
 
 	field := generator.GenerateMap(cfg.MapSize.X, cfg.MapSize.Y, cfg.Life.CellsInStart)
 	maps := 0
+	ticker := time.NewTicker(time.Duration(cfg.Life.Timeout) * time.Millisecond)
 	for i := 0; i > -1; i++ {
 		for coords, curCell := range field.Cells {
 			if curCell.Type == cell.LiveCell {
@@ -71,6 +72,6 @@ func main() {
 		}
 
 		sseBroker.Notifier <- data
-		time.Sleep(time.Duration(cfg.Life.Timeout) * time.Millisecond)
+		<-ticker.C
 	}
 }
