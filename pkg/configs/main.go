@@ -15,10 +15,10 @@ func DefaultConfig() Main {
 			FoodPoints:   35,
 			DeadLimit:    0,
 			CodeSize:     gameMap.Coords{X: 4, Y: 4},
-			CellsInStart: 15,
-			Timeout:      250,
+			CellsInStart: 10,
+			Timeout:      100,
 		},
-		MapSize: gameMap.Coords{X: 50, Y: 50},
+		MapSize: gameMap.Coords{X: 30, Y: 30},
 		Server: Server{
 			SsePort:       ":8095",
 			ConfigApiPort: "",
