@@ -16,7 +16,7 @@ func DefaultConfig() Main {
 			DeadLimit:    0,
 			CodeSize:     gameMap.Coords{X: 4, Y: 4},
 			CellsInStart: 15,
-			Timeout:      500,
+			Timeout:      250,
 		},
 		MapSize: gameMap.Coords{X: 50, Y: 50},
 		Server: Server{
