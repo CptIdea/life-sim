@@ -15,10 +15,11 @@ func DefaultConfig() Main {
 			FoodPoints:   35,
 			DeadLimit:    0,
 			CodeSize:     gameMap.Coords{X: 4, Y: 4},
-			CellsInStart: 10,
+			CellsInStart: 5,
 			Timeout:      100,
+			StartCode:    " $9!05%%! \n2%>>^?1/>5\n^!^%^>5821\n5>  /@/9#^\n!1^8@^?19\\\n/ 45>6\\?>2\n$^* */++68\n?2 $*20_6^\n268%%#1$/<\n- \\9!!<v6>",
 		},
-		MapSize: gameMap.Coords{X: 40, Y: 25},
+		MapSize: gameMap.Coords{X: 45, Y: 25},
 		Server: Server{
 			SsePort:       ":8095",
 			ConfigApiPort: "",

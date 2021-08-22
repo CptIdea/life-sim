@@ -36,16 +36,11 @@ func main() {
 
 	field := generator.GenerateMap(cfg.MapSize.X, cfg.MapSize.Y, cfg.Life.CellsInStart)
 	maps := 0
-	ticker := time.NewTicker(time.Duration(cfg.Life.Timeout) * time.Millisecond)
+	frameTicker := time.NewTicker(time.Duration(cfg.Life.Timeout) * time.Millisecond)
+	newMapTicker := time.NewTicker(time.Minute * 3)
 	for i := 0; i > -1; i++ {
-		for coords, curCell := range field.Cells {
-			if curCell.Type == cell.LiveCell {
-				action := befunge.ExecuteCode(curCell.Code, append(field.Cells.GetNearTypes(coords), curCell.Points))
-				actions.HandleAction(action, coords, field)
-			}
-		}
-
-		if !life_cycle.ExecuteLifeCycle(field) {
+		select {
+		case <-newMapTicker.C:
 			log.Println("New map, old: ", i, " map #", maps)
 
 			data, err := json.Marshal(sse_dto.SseDTOClear{
@@ -61,17 +56,41 @@ func main() {
 			field = generator.GenerateMap(cfg.MapSize.X, cfg.MapSize.Y, cfg.Life.CellsInStart)
 			i = 0
 			maps++
-		}
-		data, err := json.Marshal(sse_dto.SseDTOUpdate{
-			Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
-			Data:      field.Cells.GetArray(field.MaxSizes.X, field.MaxSizes.Y),
-			Event:     "DATA",
-		})
-		if err != nil {
-			log.Println(err)
-		}
+		case <-frameTicker.C:
+			for coords, curCell := range field.Cells {
+				if curCell.Type == cell.LiveCell {
+					action := befunge.ExecuteCode(curCell.Code, append(field.Cells.GetNearTypes(coords), curCell.Points))
+					actions.HandleAction(action, coords, field)
+				}
+			}
 
-		sseBroker.Notifier <- data
-		<-ticker.C
+			if !life_cycle.ExecuteLifeCycle(field) {
+				log.Println("New map, old: ", i, " map #", maps)
+
+				data, err := json.Marshal(sse_dto.SseDTOClear{
+					Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+					Event:     "CLEAR",
+				})
+				if err != nil {
+					log.Println(err)
+				}
+
+				sseBroker.Notifier <- data
+
+				field = generator.GenerateMap(cfg.MapSize.X, cfg.MapSize.Y, cfg.Life.CellsInStart)
+				i = 0
+				maps++
+			}
+			data, err := json.Marshal(sse_dto.SseDTOUpdate{
+				Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+				Data:      field.Cells.GetArray(field.MaxSizes.X, field.MaxSizes.Y),
+				Event:     "DATA",
+			})
+			if err != nil {
+				log.Println(err)
+			}
+
+			sseBroker.Notifier <- data
+		}
 	}
 }

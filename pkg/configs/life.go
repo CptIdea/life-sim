@@ -11,4 +11,6 @@ type Life struct {
 	CellsInStart int `json:"cellsInStart"`
 
 	Timeout int `json:"timeout,omitempty"`
+
+	StartCode string `json:"start_code,omitempty"`
 }
